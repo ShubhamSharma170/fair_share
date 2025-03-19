@@ -1,5 +1,6 @@
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/auth_provider/auth_provider.dart';
+import 'package:fair_share/utils/routes/routes_name.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,7 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GlobalKey formKey = GlobalKey<FormState>();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     TextEditingController nameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
@@ -52,7 +53,10 @@ class SignupScreen extends StatelessWidget {
                           hintText: "Enter your Email",
                           labelText: "Email",
                         ),
-                        validator: (value) {},
+                        validator: (value) {
+                          return null;
+                          // ToDo
+                        },
                       ),
                       SizedBox(height: 15),
                       TextFormField(
@@ -82,11 +86,21 @@ class SignupScreen extends StatelessWidget {
                                         fontSize: 22,
                                       ),
                                     ),
-                            onPressed: () {
-                              ctx.read<AuthProvider>().userSignUp(
-                                emailController.text,
-                                passwordController.text,
-                              );
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                bool value = await ctx
+                                    .read<AuthProvider>()
+                                    .userSignUp(
+                                      emailController.text,
+                                      passwordController.text,
+                                    );
+                                if (value) {
+                                  emailController.clear();
+                                  passwordController.clear();
+                                  nameController.clear();
+                                  Navigator.pushNamed(context, RoutesName.home);
+                                }
+                              }
                             },
                           );
                         },
