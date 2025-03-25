@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/auth_provider/auth_provider.dart';
 import 'package:fair_share/utils/routes/routes_name.dart';
@@ -15,9 +17,16 @@ class SignupScreen extends StatelessWidget {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AllColors.black,
-      appBar: AppBar(title: Text("Sign Up")),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text("Sign Up"),
+        titleTextStyle: TextStyle(color: AllColors.white, fontSize: 22),
+        backgroundColor: AllColors.purple0xFFC135E3,
+      ),
+
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         child: Container(
@@ -75,34 +84,99 @@ class SignupScreen extends StatelessWidget {
                         builder: (ctx, value, child) {
                           var loadingData =
                               ctx.watch<AuthProvider>().getLoading();
-                          return CupertinoButton(
-                            child:
-                                loadingData
-                                    ? CircularProgressIndicator()
-                                    : Text(
-                                      "Register",
-                                      style: TextStyle(
-                                        color: AllColors.black,
-                                        fontSize: 22,
-                                      ),
-                                    ),
-                            onPressed: () async {
-                              if (formKey.currentState!.validate()) {
-                                bool value = await ctx
-                                    .read<AuthProvider>()
-                                    .userSignUp(
-                                      emailController.text,
-                                      passwordController.text,
-                                    );
-                                if (value) {
-                                  emailController.clear();
-                                  passwordController.clear();
-                                  nameController.clear();
-                                  Navigator.pushNamed(context, RoutesName.home);
-                                }
-                              }
-                            },
+                          var loadingGoogleData =
+                              ctx.watch<AuthProvider>().getGoogleLoading();
+                          return Column(
+                            children: [
+                              CupertinoButton(
+                                color: AllColors.purple0xFFC135E3,
+                                child:
+                                    loadingData
+                                        ? CircularProgressIndicator(
+                                          color: AllColors.white,
+                                        )
+                                        : Text(
+                                          "Register",
+                                          style: TextStyle(
+                                            color: AllColors.white,
+                                            fontSize: 22,
+                                          ),
+                                        ),
+                                onPressed: () async {
+                                  if (formKey.currentState!.validate()) {
+                                    bool value = await ctx
+                                        .read<AuthProvider>()
+                                        .userSignUp(
+                                          emailController.text,
+                                          passwordController.text,
+                                        );
+                                    if (value) {
+                                      emailController.clear();
+                                      passwordController.clear();
+                                      nameController.clear();
+                                      Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        RoutesName.home,
+                                        (route) => false,
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                              SizedBox(height: height * .01),
+                              SizedBox(
+                                width: width * .5,
+                                height: 60,
+                                child: CupertinoButton(
+                                  color: AllColors.purple0xFFC135E3,
+                                  child:
+                                      loadingGoogleData
+                                          ? CircularProgressIndicator(
+                                            color: AllColors.white,
+                                          )
+                                          : Text(
+                                            "Google Sign In",
+                                            style: TextStyle(
+                                              color: AllColors.white,
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                  onPressed: () async {
+                                    bool value =
+                                        await ctx
+                                            .read<AuthProvider>()
+                                            .googleSignIn();
+                                    if (value) {
+                                      Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        RoutesName.home,
+                                        (route) => false,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
                           );
+                        },
+                      ),
+                      SizedBox(height: height * .01),
+                      Text(
+                        "Already have an account?",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(height: height * .01),
+                      CupertinoButton(
+                        color: AllColors.purple0xFFC135E3,
+                        child: Text(
+                          "Sign In",
+                          style: TextStyle(
+                            color: AllColors.white,
+                            fontSize: 22,
+                          ),
+                        ),
+                        onPressed: () async {
+                          Navigator.pop(context);
                         },
                       ),
                     ],

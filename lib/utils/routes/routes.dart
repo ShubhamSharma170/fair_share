@@ -1,3 +1,4 @@
+import 'package:fair_share/screens/auth/login_screen.dart';
 import 'package:fair_share/screens/auth/signup_screen.dart';
 import 'package:fair_share/screens/home/home_screen.dart';
 import 'package:fair_share/utils/routes/routes_name.dart';
@@ -13,6 +14,10 @@ class Routes {
       case RoutesName.signUp:
         return MaterialPageRoute(
           builder: (BuildContext context) => const SignupScreen(),
+        );
+      case RoutesName.signIn:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const SignInScreen(),
         );
       default:
         return MaterialPageRoute(

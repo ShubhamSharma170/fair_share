@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
         home: SignupScreen(),
-        initialRoute: RoutesName.signUp,
+        initialRoute: RoutesName.signIn,
         onGenerateRoute: (settings) => Routes.generateRoutes(settings),
         // home: ChangeNotifierProvider(create: (_)=> CounterProvider(),child: HomePage(),),
       ),
