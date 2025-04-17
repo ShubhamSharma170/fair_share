@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/firebase_method/firebase_method.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +19,15 @@ class AddExpense extends StatelessWidget {
         title: Text("Add Expense"),
         actions: [
           IconButton(
-            onPressed: () {
-              context.read<FirebaseMethodProvider>().addExpense(descController.text, amountController.text);
+            onPressed: () async {
+              bool value = await context
+                  .read<FirebaseMethodProvider>()
+                  .addExpense(descController.text, amountController.text);
+              if (value) {
+                log("check value $value");
+                descController.clear();
+                amountController.clear();
+              }
             },
             icon: Icon(Icons.check, color: AllColors.white),
           ),

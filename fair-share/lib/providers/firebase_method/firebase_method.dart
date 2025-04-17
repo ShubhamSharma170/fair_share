@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class FirebaseMethodProvider extends ChangeNotifier {
   // events
   // add expense to firebase
-  void addExpense(String description, var amount) async {
+  Future<bool> addExpense(String description, var amount) async {
     try {
       await FirebaseFirestore.instance.collection("expense").add({
         "description": description,
@@ -14,8 +14,10 @@ class FirebaseMethodProvider extends ChangeNotifier {
       });
       notifyListeners();
       log("expense added");
+      return true;
     } on FirebaseException catch (e) {
       log(e.message.toString());
     }
+    return false;
   }
 }

@@ -22,9 +22,18 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // todo (later add a row of search button)
           // list view builder show the group and non group expenses
-          Expanded(
+          ListTile(
+            title: Text("Non-Group Expenses"),
+            subtitle: Text("Expense Name"),
+            onTap: () {
+              Navigator.pushNamed(context, RoutesName.nonExpenses);
+            },
+          ),
+
+          SizedBox(
+            height: 400,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: 7,
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text("Group Name"),
@@ -32,6 +41,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, RoutesName.createGroup);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AllColors.black),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.group, size: 20),
+                      SizedBox(width: 10),
+                      Text("Start a new group", style: TextStyle(fontSize: 18)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
