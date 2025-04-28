@@ -20,4 +20,17 @@ class FirebaseMethodProvider extends ChangeNotifier {
     }
     return false;
   }
+
+  Future<bool> addGroupName(String groupName) async {
+    try {
+      FirebaseFirestore.instance.collection("group").add({
+        "groupName": groupName,
+      });
+      log(("group added"));
+      return true;
+    } on FirebaseException catch (e) {
+      log(e.message.toString());
+    }
+    return false;
+  }
 }
