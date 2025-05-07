@@ -1,5 +1,6 @@
 import 'package:fair_share/providers/auth_provider/auth_provider.dart';
 import 'package:fair_share/providers/counter_provider.dart';
+import 'package:fair_share/providers/custom_method_provider/custom_method_provider.dart';
 import 'package:fair_share/providers/firebase_method/firebase_method.dart';
 
 import 'package:fair_share/providers/list_map_provider.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ListMapProvider()),
         ChangeNotifierProvider(create: (_) => AuthProviderClass()),
         ChangeNotifierProvider(create: (_) => FirebaseMethodProvider()),
+        ChangeNotifierProvider(create: (_) => CustomMethodProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

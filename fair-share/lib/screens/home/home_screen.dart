@@ -1,7 +1,9 @@
 // ignore_for_file: unused_local_variable
 import 'package:fair_share/constant/colors.dart';
+import 'package:fair_share/providers/firebase_method/firebase_method.dart';
 import 'package:fair_share/utils/routes/routes_name.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -76,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: AllColors.purple0xFFC135E3,
           onPressed: () {
             Navigator.pushNamed(context, RoutesName.addExpense);
+            context.read<FirebaseMethodProvider>().showGroupNameList();
           },
           child: Text("Expenses", style: TextStyle(fontSize: 18)),
         ),
