@@ -1,10 +1,12 @@
 import 'dart:developer';
 
+import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/custom_method_provider/custom_method_provider.dart';
 import 'package:fair_share/providers/firebase_method/firebase_method.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:drop_down_list/drop_down_list.dart';
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key});
@@ -16,7 +18,8 @@ class AddExpense extends StatefulWidget {
 class _AddExpenseState extends State<AddExpense> {
   TextEditingController descController = TextEditingController();
   TextEditingController amountController = TextEditingController();
-  List tempList = [];
+  List<String> tempList = [];
+  String? selectedGroup;
 
   @override
   void initState() {
@@ -33,6 +36,10 @@ class _AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     bool isLoading = context.watch<CustomMethodProvider>().getLoading();
+    tempList = context.watch<FirebaseMethodProvider>().groupNameList;
+    List<SelectedListItem<String>> groupNameList =
+        tempList.map((toElement) => SelectedListItem(data: toElement)).toList();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AllColors.purple0xFFC135E3,
@@ -40,13 +47,30 @@ class _AddExpenseState extends State<AddExpense> {
         actions: [
           IconButton(
             onPressed: () async {
-              bool value = await context
-                  .read<FirebaseMethodProvider>()
-                  .addExpense(descController.text, amountController.text);
-              if (value) {
-                log("check value $value");
-                descController.clear();
-                amountController.clear();
+              if (descController.text.isEmpty ||
+                  amountController.text.isEmpty) {
+                log("empty");
+                return;
+              } else {
+                if (selectedGroup != null) {
+                  log("selected group $selectedGroup");
+                  await context
+                      .read<FirebaseMethodProvider>()
+                      .addExpenseWithGroupName(
+                        selectedGroup!,
+                        descController.text,
+                        amountController.text,
+                      );
+                } else {
+                  bool value = await context
+                      .read<FirebaseMethodProvider>()
+                      .addExpense(descController.text, amountController.text);
+                  if (value) {
+                    log("check value $value");
+                    descController.clear();
+                    amountController.clear();
+                  }
+                }
               }
             },
             icon: Icon(Icons.check, color: AllColors.white),
@@ -57,28 +81,58 @@ class _AddExpenseState extends State<AddExpense> {
           isLoading
               ? Center(
                 child: Container(
+                  padding: const EdgeInsets.all(8.0),
                   color: AllColors.grey,
                   width: MediaQuery.of(context).size.width,
                   child: Column(
                     // mainAxisAlignment: MainAxisAlignment.start,
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Consumer<FirebaseMethodProvider>(
+                      Consumer(
                         builder: (ctx, provider, child) {
-                          final list = provider.getGroupNameList();
-                          return DropdownButton(
-                            value: list.isEmpty ? null : list.first,
-                            items:
-                                list
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(e),
-                                      ),
-                                    )
-                                    .toList(),
-                            onChanged: (value) {
-                              log("value $value");
+                          return TextField(
+                            decoration: InputDecoration(hintText: "Group Name"),
+                            // enabled: false,
+                            readOnly: true,
+                            controller: TextEditingController(
+                              text:
+                                  ctx
+                                      .read<FirebaseMethodProvider>()
+                                      .selectedGroupName,
+                            ),
+                            onTap: () {
+                              DropDownState<String>(
+                                dropDown: DropDown<String>(
+                                  isDismissible: true,
+                                  bottomSheetTitle: const Text(
+                                    "Select City",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
+                                  submitButtonText: 'Save',
+                                  clearButtonText: 'Clear',
+                                  data: groupNameList,
+                                  onSelected: (selectedItems) {
+                                    if (selectedItems.isEmpty) return;
+                                    selectedGroup = selectedItems[0].data;
+
+                                    List<String> list =
+                                        selectedItems
+                                            .map((e) => e.data)
+                                            .toList();
+                                    ctx
+                                        .read<FirebaseMethodProvider>()
+                                        .selectedGroupName = list[0];
+                                    log(
+                                      "selected list ${ctx.read<FirebaseMethodProvider>().selectedGroupName}",
+                                    );
+                                  },
+                                  enableMultipleSelection: false,
+                                  maxSelectedItems: 1,
+                                ),
+                              ).showModal(ctx);
                             },
                           );
                         },
