@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseMethodProvider extends ChangeNotifier {
@@ -27,6 +28,10 @@ class FirebaseMethodProvider extends ChangeNotifier {
         "description": description,
         "amount": amount,
       });
+      // await FirebaseFirestore.instance.collection("expense").add({
+      //   "description": description,
+      //   "amount": amount,
+      // });
       notifyListeners();
       log("expense added");
       return true;

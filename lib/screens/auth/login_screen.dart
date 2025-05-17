@@ -2,7 +2,7 @@
 
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/auth_provider/auth_provider.dart';
-import 'package:fair_share/utils/routes/routes_name.dart';
+import 'package:fair_share/routes/routes_name.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -65,10 +65,10 @@ class SignInScreen extends StatelessWidget {
                       ),
 
                       SizedBox(height: height * .1),
-                      Consumer<AuthProvider>(
+                      Consumer<AuthProviderClass>(
                         builder: (ctx, value, child) {
                           var loadingData =
-                              ctx.watch<AuthProvider>().getLoading();
+                              ctx.watch<AuthProviderClass>().getLoading();
                           return CupertinoButton(
                             color: AllColors.purple0xFFC135E3,
                             child:
@@ -84,7 +84,7 @@ class SignInScreen extends StatelessWidget {
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
                                 bool value = await ctx
-                                    .read<AuthProvider>()
+                                    .read<AuthProviderClass>()
                                     .signIn(
                                       emailController.text,
                                       passwordController.text,

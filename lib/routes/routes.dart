@@ -1,7 +1,11 @@
+import 'package:fair_share/non-expenses/non-expenses_screen.dart';
+
+import '../screens/addexpense/add_expense.dart';
 import 'package:fair_share/screens/auth/login_screen.dart';
 import 'package:fair_share/screens/auth/signup_screen.dart';
-import 'package:fair_share/screens/home/home_screen.dart';
-import 'package:fair_share/utils/routes/routes_name.dart';
+import '../screens/createGroup/create_group_screen.dart';
+import '../screens/home/home_screen.dart';
+import 'routes_name.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -18,6 +22,18 @@ class Routes {
       case RoutesName.signIn:
         return MaterialPageRoute(
           builder: (BuildContext context) => const SignInScreen(),
+        );
+      case RoutesName.addExpense:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const AddExpense(),
+        );
+      case RoutesName.nonExpenses:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const NonExpensesScreen(),
+        );
+      case RoutesName.createGroup:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => const CreateGroupScreen(),
         );
       default:
         return MaterialPageRoute(

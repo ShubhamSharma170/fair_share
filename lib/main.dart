@@ -2,13 +2,12 @@ import 'package:fair_share/providers/auth_provider/auth_provider.dart';
 import 'package:fair_share/providers/counter_provider.dart';
 
 import 'package:fair_share/providers/list_map_provider.dart';
+import 'package:fair_share/routes/routes.dart';
+import 'package:fair_share/routes/routes_name.dart';
 import 'package:fair_share/screens/auth/signup_screen.dart';
-import 'package:fair_share/utils/routes/routes_name.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'utils/routes/routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +35,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => CounterProvider()),
         ChangeNotifierProvider(create: (_) => ListMapProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProviderClass()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
