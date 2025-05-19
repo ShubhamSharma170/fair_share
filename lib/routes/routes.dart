@@ -1,4 +1,5 @@
-import 'package:fair_share/non-expenses/non-expenses_screen.dart';
+import 'package:fair_share/screens/group_expenses/group_expenses.dart';
+import 'package:fair_share/screens/non-expenses/non-expenses_screen.dart';
 
 import '../screens/addexpense/add_expense.dart';
 import 'package:fair_share/screens/auth/login_screen.dart';
@@ -34,6 +35,11 @@ class Routes {
       case RoutesName.createGroup:
         return MaterialPageRoute(
           builder: (BuildContext context) => const CreateGroupScreen(),
+        );
+      case RoutesName.groupExpenses:
+        final args = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (BuildContext context) => GroupExpenses(groupId: args),
         );
       default:
         return MaterialPageRoute(

@@ -1,4 +1,7 @@
 // ignore_for_file: unused_local_variable
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/firebase_method/firebase_method.dart';
 import 'package:fair_share/routes/routes_name.dart';
@@ -32,19 +35,58 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
 
-          SizedBox(
-            height: 400,
-            child: ListView.builder(
-              itemCount: 7,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text("Group Name"),
-                  subtitle: Text("Expense Name"),
+          StreamBuilder(
+            stream:
+                FirebaseFirestore.instance
+                    .collection("groupExpense")
+                    .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No expenses found.'));
+              } else {
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    log(
+                      "snapshot.data!.docs[index]: ${snapshot.data!.docs[index].id}",
+                    );
+                    return ListTile(
+                      title: Text("${snapshot.data!.docs[index]['groupName']}"),
+                      // subtitle: Text("Expense Name"),
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RoutesName.groupExpenses,
+                          arguments: snapshot.data!.docs[index].id,
+                        );
+                      },
+                    );
+                  },
                 );
-              },
-            ),
+              }
+            },
           ),
+
+          // SizedBox(
+          //   height: 400,
+          //   child: ListView.builder(
+          //     itemCount: 7,
+          //     itemBuilder: (context, index) {
+          //       return ListTile(
+          //         title: Text("Group Name"),
+          //         subtitle: Text("Expense Name"),
+          //       );
+          //     },
+          //   ),
+          // ),
           SizedBox(height: 20),
+          // Expanded(child: StreamBuilder(stream: stream, builder: builder)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

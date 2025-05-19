@@ -92,7 +92,11 @@ class SignInScreen extends StatelessWidget {
                                 if (value) {
                                   emailController.clear();
                                   passwordController.clear();
-                                  Navigator.pushNamed(context, RoutesName.home);
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    RoutesName.home,
+                                    (route) => false,
+                                  );
                                 }
                               }
                             },
