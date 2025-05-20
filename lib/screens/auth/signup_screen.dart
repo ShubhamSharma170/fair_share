@@ -22,7 +22,10 @@ class SignupScreen extends StatelessWidget {
       backgroundColor: AllColors.black,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("Sign Up"),
+        title: Text(
+          "Sign Up",
+          style: TextStyle(color: AllColors.white, fontWeight: FontWeight.bold),
+        ),
         titleTextStyle: TextStyle(color: AllColors.white, fontSize: 22),
         backgroundColor: AllColors.purple0xFFC135E3,
       ),
@@ -38,6 +41,34 @@ class SignupScreen extends StatelessWidget {
           child: Center(
             child: Column(
               children: [
+                Column(
+                  children: [
+                    Text(
+                      "Welcome",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: AllColors.purple0xFFC135E3,
+                      ),
+                    ),
+                    Text(
+                      "To",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: AllColors.purple0xFFC135E3,
+                      ),
+                    ),
+                    Text(
+                      "Fair Share",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: AllColors.purple0xFFC135E3,
+                      ),
+                    ),
+                  ],
+                ),
                 Form(
                   key: formKey,
                   child: Column(
@@ -109,6 +140,8 @@ class SignupScreen extends StatelessWidget {
                                         .userSignUp(
                                           emailController.text,
                                           passwordController.text,
+                                          context,
+                                          nameController.text,
                                         );
                                     if (value) {
                                       emailController.clear();

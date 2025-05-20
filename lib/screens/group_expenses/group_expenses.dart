@@ -18,6 +18,10 @@ class _GroupExpensesState extends State<GroupExpenses> {
   // late String? groupId;
   @override
   Widget build(BuildContext context) {
+    var borderRadius = const BorderRadius.only(
+      topLeft: Radius.circular(32),
+      bottomLeft: Radius.circular(32),
+    );
     // final args = ModalRoute.of(context)?.settings.arguments;
     log("args ${widget.groupId}");
     return Scaffold(
@@ -29,34 +33,62 @@ class _GroupExpensesState extends State<GroupExpenses> {
         child: Column(
           children: [
             Expanded(
-              child: StreamBuilder(
-                stream:
-                    FirebaseFirestore.instance
-                        .collection('groupExpense')
-                        .doc(widget.groupId)
-                        .collection("expense")
-                        .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text('No expenses found.'));
-                  } else {
-                    final expenseDocs = snapshot.data!.docs;
-                    return ListView.builder(
-                      itemCount: expenseDocs.length,
-                      itemBuilder: (context, index) {
-                        final expense = expenseDocs[index].data();
-                        return ListTile(
-                          title: Text(expense['amount']),
-                          subtitle: Text(expense['description'].toString()),
-                        );
-                      },
-                    );
-                  }
-                },
+              child: Container(
+                padding: const EdgeInsets.only(left: 10, top: 10),
+                child: StreamBuilder(
+                  stream:
+                      FirebaseFirestore.instance
+                          .collection('groupExpense')
+                          .doc(widget.groupId)
+                          .collection("expense")
+                          .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData ||
+                        snapshot.data!.docs.isEmpty) {
+                      return const Center(child: Text('No expenses found.'));
+                    } else {
+                      final expenseDocs = snapshot.data!.docs;
+                      return ListView.builder(
+                        itemCount: expenseDocs.length,
+                        itemBuilder: (context, index) {
+                          final expense = expenseDocs[index].data();
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: ListTile(
+                              title: Text(expense['amount']),
+                              subtitle: Text(expense['description'].toString()),
+                              subtitleTextStyle: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              titleTextStyle: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              leading: Icon(
+                                Icons.group,
+                                color: AllColors.white,
+                              ),
+                              // subtitle: Text("Expense Name"),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: borderRadius,
+                              ),
+                              selectedTileColor: AllColors.grey,
+                              style: ListTileStyle.drawer,
+                              tileColor: AllColors.purple0xFFC135E3,
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ],

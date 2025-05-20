@@ -1,9 +1,11 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously
 
 import 'dart:developer';
+import 'package:fair_share/providers/firebase_method/firebase_method.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 class AuthProviderClass extends ChangeNotifier {
   bool _isLoading = false;
@@ -26,7 +28,12 @@ class AuthProviderClass extends ChangeNotifier {
   }
 
   // method for sign up
-  Future<bool> userSignUp(String email, String password) async {
+  Future<bool> userSignUp(
+    String email,
+    String password,
+    BuildContext context,
+    String name,
+  ) async {
     try {
       changeValue();
       UserCredential? user = await FirebaseAuth.instance
@@ -35,6 +42,10 @@ class AuthProviderClass extends ChangeNotifier {
         log("user created");
         log("user details ${user.user!}");
         changeValue();
+        Provider.of<FirebaseMethodProvider>(
+          context,
+          listen: false,
+        ).saveUserDetails(name, email, password, user.user!.uid);
         return true;
       } else {
         log("user not created");

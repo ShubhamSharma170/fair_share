@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously, unused_local_variable
+
 import 'dart:developer';
 
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/custom_method_provider/custom_method_provider.dart';
 import 'package:fair_share/providers/firebase_method/firebase_method.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drop_down_list/drop_down_list.dart';
@@ -29,7 +32,9 @@ class _AddExpenseState extends State<AddExpense> {
 
   Future<void> getValue() async {
     Future.delayed(Duration.zero, () {
-      context.read<CustomMethodProvider>().changeValue();
+      final provider = context.read<CustomMethodProvider>();
+      provider.resetLoadingValue();
+      provider.changeValue();
     });
   }
 
@@ -39,51 +44,24 @@ class _AddExpenseState extends State<AddExpense> {
     tempList = context.watch<FirebaseMethodProvider>().groupNameList;
     List<SelectedListItem<String>> groupNameList =
         tempList.map((toElement) => SelectedListItem(data: toElement)).toList();
-
+    var height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AllColors.purple0xFFC135E3,
         title: Text("Add Expense"),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              if (descController.text.isEmpty ||
-                  amountController.text.isEmpty) {
-                log("empty");
-                return;
-              } else {
-                if (selectedGroup != null) {
-                  log("selected group $selectedGroup");
-                  await context
-                      .read<FirebaseMethodProvider>()
-                      .addExpenseWithGroupName(
-                        selectedGroup!,
-                        descController.text,
-                        amountController.text,
-                      );
-                } else {
-                  bool value = await context
-                      .read<FirebaseMethodProvider>()
-                      .addExpense(descController.text, amountController.text);
-                  if (value) {
-                    log("check value $value");
-                    descController.clear();
-                    amountController.clear();
-                  }
-                }
-              }
-            },
-            icon: Icon(Icons.check, color: AllColors.white),
-          ),
-        ],
       ),
       body:
           isLoading
-              ? Center(
+              ? Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: AllColors.grey),
+                width: MediaQuery.of(context).size.width,
                 child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  color: AllColors.grey,
-                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: AllColors.white,
+                  ),
                   child: Column(
                     // mainAxisAlignment: MainAxisAlignment.start,
                     // crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,7 +69,13 @@ class _AddExpenseState extends State<AddExpense> {
                       Consumer(
                         builder: (ctx, provider, child) {
                           return TextField(
-                            decoration: InputDecoration(hintText: "Group Name"),
+                            decoration: InputDecoration(
+                              hintText: "Group Name",
+                              hintStyle: TextStyle(
+                                color: AllColors.black,
+                                fontSize: 18,
+                              ),
+                            ),
                             // enabled: false,
                             readOnly: true,
                             controller: TextEditingController(
@@ -105,7 +89,7 @@ class _AddExpenseState extends State<AddExpense> {
                                 dropDown: DropDown<String>(
                                   isDismissible: true,
                                   bottomSheetTitle: const Text(
-                                    "Select City",
+                                    "Select Group Name",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20.0,
@@ -137,7 +121,7 @@ class _AddExpenseState extends State<AddExpense> {
                           );
                         },
                       ),
-
+                      SizedBox(height: 20),
                       // description
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -149,7 +133,7 @@ class _AddExpenseState extends State<AddExpense> {
                               height: 50,
                               width: 50,
                               decoration: BoxDecoration(
-                                border: Border.all(color: AllColors.white),
+                                border: Border.all(color: AllColors.black),
                               ),
                               child: Icon(
                                 Icons.document_scanner_sharp,
@@ -165,7 +149,7 @@ class _AddExpenseState extends State<AddExpense> {
                                 decoration: InputDecoration(
                                   hintText: "Enter a description",
                                   hintStyle: TextStyle(
-                                    color: AllColors.white,
+                                    color: AllColors.black,
                                     fontSize: 20,
                                   ),
                                 ),
@@ -174,6 +158,7 @@ class _AddExpenseState extends State<AddExpense> {
                           ],
                         ),
                       ),
+                      SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
@@ -185,7 +170,7 @@ class _AddExpenseState extends State<AddExpense> {
                               height: 50,
                               width: 50,
                               decoration: BoxDecoration(
-                                border: Border.all(color: AllColors.white),
+                                border: Border.all(color: AllColors.black),
                               ),
                               child: Icon(Icons.attach_money_rounded, size: 40),
                             ),
@@ -198,7 +183,7 @@ class _AddExpenseState extends State<AddExpense> {
                                 decoration: InputDecoration(
                                   hintText: "0.00",
                                   hintStyle: TextStyle(
-                                    color: AllColors.white,
+                                    color: AllColors.black,
                                     fontSize: 20,
                                   ),
                                 ),
@@ -244,22 +229,59 @@ class _AddExpenseState extends State<AddExpense> {
                           ),
                         ],
                       ),
+                      CupertinoButton(
+                        onPressed: () async {
+                          if (descController.text.isEmpty ||
+                              amountController.text.isEmpty) {
+                            log("empty");
+                            return;
+                          } else {
+                            if (selectedGroup != null) {
+                              log("selected group $selectedGroup");
+                              await context
+                                  .read<FirebaseMethodProvider>()
+                                  .addExpenseWithGroupName(
+                                    selectedGroup!,
+                                    descController.text,
+                                    amountController.text,
+                                  );
+                            } else {
+                              bool value = await context
+                                  .read<FirebaseMethodProvider>()
+                                  .addExpense(
+                                    descController.text,
+                                    amountController.text,
+                                  );
+                              if (value) {
+                                log("check value $value");
+                                descController.clear();
+                                amountController.clear();
+                              }
+                            }
+                          }
+                        },
+                        color: AllColors.purple0xFFC135E3,
+                        child: Text(
+                          "Add Expense",
+                          style: TextStyle(color: AllColors.white),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               )
               : Center(child: CircularProgressIndicator()),
-      floatingActionButton: SizedBox(
-        height: 70, // custom height
-        width: 120,
-        child: FloatingActionButton(
-          backgroundColor: AllColors.purple0xFFC135E3,
-          onPressed: () {
-            // Navigator.pushNamed(context, RoutesName.addExpense);
-          },
-          child: Text("Show Group", style: TextStyle(fontSize: 18)),
-        ),
-      ),
+      // floatingActionButton: SizedBox(
+      //   height: 70, // custom height
+      //   width: 120,
+      //   child: FloatingActionButton(
+      //     backgroundColor: AllColors.purple0xFFC135E3,
+      //     onPressed: () {
+      //       // Navigator.pushNamed(context, RoutesName.addExpense);
+      //     },
+      //     child: Text("Show Group", style: TextStyle(fontSize: 18)),
+      //   ),
+      // ),
     );
   }
 }

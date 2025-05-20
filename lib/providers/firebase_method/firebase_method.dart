@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseMethodProvider extends ChangeNotifier {
@@ -106,6 +107,38 @@ class FirebaseMethodProvider extends ChangeNotifier {
       notifyListeners();
     } on FirebaseException catch (e) {
       log(e.message.toString());
+    }
+  }
+
+  // method for log out
+  Future<bool> logOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      log('log out successfully.....');
+      return true;
+    } on FirebaseException catch (e) {
+      log("Error is.......${e.message}");
+      return false;
+    }
+  }
+
+  // method for save user details
+  Future<void> saveUserDetails(
+    String name,
+    String email,
+    String password,
+    String uid,
+  ) async {
+    try {
+      FirebaseFirestore.instance.collection("users").add({
+        "name": name,
+        "email": email,
+        "password": password,
+        "uid": uid,
+      });
+      log("user details saved");
+    } on FirebaseException catch (e) {
+      log("Error is.......${e.message}");
     }
   }
 }

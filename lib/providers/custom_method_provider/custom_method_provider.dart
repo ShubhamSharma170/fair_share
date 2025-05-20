@@ -11,10 +11,16 @@ class CustomMethodProvider extends ChangeNotifier {
   // get value
   bool getLoading() => checkLoading;
 
+  // change value
+  void resetLoadingValue() {
+    checkLoading = false;
+    notifyListeners();
+  }
+
   // change value after 2 seconds
   changeValue() {
     Timer(Duration(seconds: 2), () {
-      checkLoading = !checkLoading;
+      checkLoading = true;
       log("check loading $checkLoading");
       notifyListeners();
     });

@@ -19,7 +19,7 @@ class SignInScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AllColors.black,
       appBar: AppBar(
-        title: Text("Sign Up"),
+        title: Text("LogIn"),
         titleTextStyle: TextStyle(color: AllColors.white, fontSize: 22),
         backgroundColor: AllColors.purple0xFFC135E3,
       ),
@@ -34,6 +34,21 @@ class SignInScreen extends StatelessWidget {
           child: Center(
             child: Column(
               children: [
+                Container(
+                  child: Column(
+                    children: [
+                      Text(
+                        "Welcome Back",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: AllColors.purple0xFFC135E3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: height * .05),
                 Form(
                   key: formKey,
                   child: Column(
@@ -64,7 +79,7 @@ class SignInScreen extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(height: height * .1),
+                      SizedBox(height: height * .2),
                       Consumer<AuthProviderClass>(
                         builder: (ctx, value, child) {
                           var loadingData =
