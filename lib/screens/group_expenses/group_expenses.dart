@@ -59,8 +59,8 @@ class _GroupExpensesState extends State<GroupExpenses> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             child: ListTile(
-                              title: Text(expense['amount']),
-                              subtitle: Text(expense['description'].toString()),
+                              title: Text(expense['description'].toString()),
+                              subtitle: Text(expense['name'].toString()),
                               subtitleTextStyle: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 22,
@@ -82,6 +82,14 @@ class _GroupExpensesState extends State<GroupExpenses> {
                               selectedTileColor: AllColors.grey,
                               style: ListTileStyle.drawer,
                               tileColor: AllColors.purple0xFFC135E3,
+                              trailing: Text(
+                                expense['amount'].toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           );
                         },

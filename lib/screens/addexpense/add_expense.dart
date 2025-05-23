@@ -6,6 +6,7 @@ import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/custom_method_provider/custom_method_provider.dart';
 import 'package:fair_share/providers/firebase_method/firebase_method.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ class _AddExpenseState extends State<AddExpense> {
   TextEditingController amountController = TextEditingController();
   List<String> tempList = [];
   String? selectedGroup;
+  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -244,6 +246,7 @@ class _AddExpenseState extends State<AddExpense> {
                                     selectedGroup!,
                                     descController.text,
                                     amountController.text,
+                                    user!.uid,
                                   );
                             } else {
                               bool value = await context
@@ -271,17 +274,6 @@ class _AddExpenseState extends State<AddExpense> {
                 ),
               )
               : Center(child: CircularProgressIndicator()),
-      // floatingActionButton: SizedBox(
-      //   height: 70, // custom height
-      //   width: 120,
-      //   child: FloatingActionButton(
-      //     backgroundColor: AllColors.purple0xFFC135E3,
-      //     onPressed: () {
-      //       // Navigator.pushNamed(context, RoutesName.addExpense);
-      //     },
-      //     child: Text("Show Group", style: TextStyle(fontSize: 18)),
-      //   ),
-      // ),
     );
   }
 }

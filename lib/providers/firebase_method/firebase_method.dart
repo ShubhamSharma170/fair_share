@@ -45,8 +45,10 @@ class FirebaseMethodProvider extends ChangeNotifier {
     String groupName,
     String description,
     String amount,
+    String uid,
   ) async {
     try {
+      String name = await findUserName(uid);
       // find group name
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance
@@ -63,13 +65,14 @@ class FirebaseMethodProvider extends ChangeNotifier {
         docRef.collection("expense").add({
           "description": description,
           "amount": amount,
+          "name": name,
         });
       } else {
         FirebaseFirestore.instance
             .collection("groupExpense")
             .doc(snapshot.docs.first.id)
             .collection("expense")
-            .add({"description": description, "amount": amount});
+            .add({"description": description, "amount": amount, "name": name});
       }
       log("expense added with group name");
     } on FirebaseException catch (e) {
@@ -139,6 +142,27 @@ class FirebaseMethodProvider extends ChangeNotifier {
       log("user details saved");
     } on FirebaseException catch (e) {
       log("Error is.......${e.message}");
+    }
+  }
+
+  // method for find user names
+  Future<String> findUserName(String uid) async {
+    try {
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance
+              .collection("users")
+              .where("uid", isEqualTo: uid)
+              .get();
+      if (snapshot.docs.isNotEmpty) {
+        Map<String, dynamic> data =
+            snapshot.docs.first.data() as Map<String, dynamic>;
+        log("snapshort ${data["name"]}");
+        return data["name"];
+      }
+      return "";
+    } on FirebaseException catch (e) {
+      log("Error is.......${e.message}");
+      return "";
     }
   }
 }
