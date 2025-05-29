@@ -6,4 +6,5 @@ class RoutesName {
   static const String nonExpenses = 'non-expenses';
   static const String createGroup = 'create-group';
   static const String groupExpenses = 'group-expenses';
+  static const String groupScreen = 'group-screen';
 }

@@ -181,6 +181,7 @@ class _AddExpenseState extends State<AddExpense> {
                               width: 200,
                               height: 50,
                               child: TextField(
+                                keyboardType: TextInputType.number,
                                 controller: amountController,
                                 decoration: InputDecoration(
                                   hintText: "0.00",

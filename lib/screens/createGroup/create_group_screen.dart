@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/firebase_method/firebase_method.dart';
+import 'package:fair_share/routes/routes_name.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +14,7 @@ class CreateGroupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController groupNameController = TextEditingController();
     var height = MediaQuery.of(context).size.height;
+    String groupName = "";
     return Scaffold(
       appBar: AppBar(
         title: Text("Create Group Screen"),
@@ -95,11 +99,37 @@ class CreateGroupScreen extends StatelessWidget {
                     SizedBox(height: height * 0.05),
                     CupertinoButton(
                       onPressed: () async {
+                        if (groupNameController.text.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text("Error"),
+                                content: Text("Please enter a group name"),
+                                actions: [
+                                  TextButton(
+                                    child: Text("OK"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        }
                         bool value = await context
                             .read<FirebaseMethodProvider>()
                             .addGroupName(groupNameController.text);
+                        groupName = groupNameController.text;
                         if (value) {
                           groupNameController.clear();
+                          Navigator.pushNamed(
+                            context,
+                            RoutesName.groupScreen,
+                            arguments: groupName,
+                          );
                         }
                       },
                       color: AllColors.purple0xFFC135E3,

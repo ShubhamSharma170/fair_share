@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 class FirebaseMethodProvider extends ChangeNotifier {
   List<String> groupNameList = [];
+  List<String> userNameList = [];
+  List<String> selectedUserNameList = [];
   String _selectedGroupName = "";
 
   // events
@@ -19,6 +21,12 @@ class FirebaseMethodProvider extends ChangeNotifier {
 
   // get list of group name
   List getGroupNameList() => groupNameList;
+
+  // get list of user name
+  List getUserNameList() => userNameList;
+
+  // get list of selected user name
+  List getSelectedUserNameList() => selectedUserNameList;
 
   // add expense to firebase
   Future<bool> addExpense(String description, var amount) async {
@@ -163,6 +171,49 @@ class FirebaseMethodProvider extends ChangeNotifier {
     } on FirebaseException catch (e) {
       log("Error is.......${e.message}");
       return "";
+    }
+  }
+
+  // method for show all user name list
+  Future<void> showUserNameList() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection("users").get();
+
+      userNameList =
+          querySnapshot.docs
+              .map(
+                (doc) => (doc.data() as Map<String, dynamic>)['name'] as String,
+              )
+              .toList();
+      log("user name list $userNameList");
+      notifyListeners();
+    } on FirebaseException catch (error) {
+      log("Error is.......${error.message}");
+    }
+  }
+
+  // method for add user in group
+  addUserInGroup(List<String> userList, String groupName) async {
+    try {
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance
+              .collection("group")
+              .where("groupName", isEqualTo: groupName)
+              .limit(1)
+              .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        FirebaseFirestore.instance
+            .collection("group")
+            .doc(snapshot.docs.first.id)
+            .update({"users": FieldValue.arrayUnion(userList)});
+        selectedUserNameList = userList;
+        notifyListeners();
+        log("user added in group");
+      }
+    } on FirebaseException catch (e) {
+      log("Error is.......${e.message}");
     }
   }
 }
