@@ -7,6 +7,7 @@ class FirebaseMethodProvider extends ChangeNotifier {
   List<String> groupNameList = [];
   List<String> userNameList = [];
   List<String> selectedUserNameList = [];
+  List<String> selectedGroupNameList = [];
   String _selectedGroupName = "";
 
   // events
@@ -26,7 +27,10 @@ class FirebaseMethodProvider extends ChangeNotifier {
   List getUserNameList() => userNameList;
 
   // get list of selected user name
-  List getSelectedUserNameList() => selectedUserNameList;
+  List<String> getSelectedUserNameList() => selectedUserNameList;
+
+  // get list of selected group name
+  List getSelectedGroupNameList() => selectedGroupNameList;
 
   // add expense to firebase
   Future<bool> addExpense(String description, var amount) async {
@@ -211,6 +215,27 @@ class FirebaseMethodProvider extends ChangeNotifier {
         selectedUserNameList = userList;
         notifyListeners();
         log("user added in group");
+      }
+    } on FirebaseException catch (e) {
+      log("Error is.......${e.message}");
+    }
+  }
+
+  // method for show only group name where users are added
+  Future<void> showGroupNameOnly(String userName) async {
+    try {
+      selectedGroupNameList.clear();
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('group').get();
+      if (snapshot.docs.isNotEmpty) {
+        for (var doc in snapshot.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          if (data['users'] != null && data["users"].contains(userName)) {
+            selectedGroupNameList.add(data["groupName"]);
+          }
+        }
+        log("data $selectedGroupNameList}");
+        notifyListeners();
       }
     } on FirebaseException catch (e) {
       log("Error is.......${e.message}");

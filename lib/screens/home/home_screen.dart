@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fair_share/constant/colors.dart';
 import 'package:fair_share/providers/firebase_method/firebase_method.dart';
 import 'package:fair_share/routes/routes_name.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +16,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  User? user = FirebaseAuth.instance.currentUser;
+  String userName = "";
+  List<dynamic> groupNameList = [];
+  @override
+  void initState() {
+    getValue();
+    super.initState();
+  }
+
+  void getValue() async {
+    userName = await context.read<FirebaseMethodProvider>().findUserName(
+      user!.uid,
+    );
+    context.read<FirebaseMethodProvider>().showGroupNameOnly(userName);
+  }
+
   @override
   Widget build(BuildContext context) {
+    groupNameList =
+        context.watch<FirebaseMethodProvider>().getSelectedGroupNameList();
     var borderRadius = const BorderRadius.only(
       topLeft: Radius.circular(32),
       bottomLeft: Radius.circular(32),
@@ -92,14 +111,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text('No expenses found.'));
                 } else {
+                  final filteredGroup =
+                      snapshot.data!.docs.where((doc) {
+                        return groupNameList.contains(doc['groupName']);
+                      }).toList();
+                  log("group name list $groupNameList");
+                  log("group name list ${filteredGroup.length}");
                   return ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
+                    // itemCount: snapshot.data!.docs.length,
+                    itemCount: filteredGroup.length,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
-                      // log(
-                      //   "snapshot.data!.docs[index]: ${snapshot.data!.docs[index].id}",
-                      // );
+                      final groupDoc = filteredGroup[index];
+                      if (filteredGroup.isEmpty) {
+                        return const Center(
+                          child: Text('No matching groups found.'),
+                        );
+                      }
                       return Container(
                         padding: const EdgeInsets.only(
                           top: 10,
@@ -108,7 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: ListTile(
                           title: Text(
-                            "${snapshot.data!.docs[index]['groupName']}",
+                            "${groupDoc['groupName']}",
+                            // "${snapshot.data!.docs[index]['groupName']}",
                           ),
                           titleTextStyle: const TextStyle(
                             color: Colors.white,
